@@ -65,12 +65,16 @@ static NSString * const kAFCharactersToBeEscapedInQueryString = @":/?&=;+!@#$()'
 
 static NSString * AFPercentEscapedQueryStringKeyFromStringWithEncoding(NSString *string, NSStringEncoding encoding) {
     static NSString * const kAFCharactersToLeaveUnescapedInQueryStringPairKey = @"[].";
-
-	return (__bridge_transfer  NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)string, (__bridge CFStringRef)kAFCharactersToLeaveUnescapedInQueryStringPairKey, (__bridge CFStringRef)kAFCharactersToBeEscapedInQueryString, CFStringConvertNSStringEncodingToEncoding(encoding));
+    
+    NSCharacterSet *allowedCharacters = [NSCharacterSet characterSetWithCharactersInString:kAFCharactersToLeaveUnescapedInQueryStringPairKey];
+    
+    return [string stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
 }
 
 static NSString * AFPercentEscapedQueryStringValueFromStringWithEncoding(NSString *string, NSStringEncoding encoding) {
-	return (__bridge_transfer  NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)string, NULL, (__bridge CFStringRef)kAFCharactersToBeEscapedInQueryString, CFStringConvertNSStringEncodingToEncoding(encoding));
+    
+    return [string stringByRemovingPercentEncoding];
+    
 }
 
 #pragma mark -
